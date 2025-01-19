@@ -1,0 +1,27 @@
+{
+	"name": "t7/http-app",
+	"license": "MIT",
+	"require": {
+		"php": ">=8.2",
+		"ext-event": "^3.1.4",
+		"workerman/workerman": "^5.0.0",
+		"nikic/fast-route": "^1.3.0"
+	},
+	"require-dev": {
+		"friendsofphp/php-cs-fixer": "^3.65",
+		"josephscott/phpcsfixer-config": "^0.0.3",
+		"phpstan/phpstan": "^2.1",
+		"pestphp/pest": "^3.7.1",
+		"t7/http-request": "^0.0.1"
+	},
+	"autoload": {
+		"classmap": [
+			"src/t7/http/app.php"
+		]
+	},
+	"config": {
+		"classmap-authoritative": true,
+		"optimize-autoloader": true,
+		"allow-plugins": false
+	}
+}
