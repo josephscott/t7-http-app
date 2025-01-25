@@ -110,5 +110,7 @@ class App {
 	public function run() {
 		$this->worker = new Worker( $this->origin );
 		$this->worker->onWorkerStart = [ $this, 'on_worker_start' ];
+		$this->worker->onMessage = [ $this, 'on_message' ];
+		$this->worker->runAll();
 	}
 }
