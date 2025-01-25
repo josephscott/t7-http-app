@@ -6,6 +6,7 @@ namespace T7\HTTP;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use stdClass;
+use Workerman\Connection\TcpConnection;
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 use Workerman\Worker;
@@ -73,6 +74,33 @@ class App {
 		$this->router = simpleDispatcher( function ( RouteCollector $router ) {
 			require $this->routes_file;
 		} );
+	}
+
+	public function on_message(
+		TcpConnection $connection,
+		Request $request
+	) : void {
+		$response = new Response( 200, [] );
+
+		$match = $this->router->dispatch(
+			$request->method(),
+			$request->path()
+		);
+
+		switch( $match[0] ) {
+			case Dispatcher::FOUND:
+				$handler = $match[1];
+				$vars = $match[2];
+				$response = $this->call_route(
+					$handler,
+					$vars,
+					$request,
+					$response
+				);
+				break;
+		}
+
+		$connection->send( $response );
 	}
 
 	public function on_worker_start( Worker $worker ) : void {
