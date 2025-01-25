@@ -5,10 +5,18 @@ namespace T7\HTTP;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use stdClass;
+use Workerman\Protocols\Http\Request;
+use Workerman\Protocols\Http\Response;
 use Workerman\Worker;
-use function FastRoute\simpleDispatcher;
 use function error_log;
+use function FastRoute\simpleDispatcher;
+use function is_callable;
 use function is_readable;
+use function is_string;
+use function ob_end_clean;
+use function ob_get_contents;
+use function ob_start;
 
 class App {
 	public string $origin = 'http://127.0.0.1:31313';
@@ -28,6 +36,37 @@ class App {
 		}
 
 		$this->routes_file = $routes_file;
+	}
+
+	public function call_route(
+		string|array|callable $handler,
+		array $vars,
+		Request $request,
+		Response $response
+	) : Response {
+		$app = new stdClass();
+		$app->handler = $handler;
+		$app->request = $request;
+		$app->response = $response;
+		$app->vars = $vars;
+
+		$out = '';
+
+		if ( is_string( $handler ) && is_readable( $handler ) ) {
+			$call_file = function ( $app ) {
+				ob_start();
+				require $app->handler;
+				$out = ob_get_contents();
+				ob_end_clean();
+				return $out;
+			};
+			$out = $call_file( $app );
+		} elseif ( is_callable( $handler ) ) {
+			$out = $handler( $app );
+		}
+
+		$app->response->withBody( $out );
+		return $app->response;
 	}
 
 	public function load_routes(): void {
