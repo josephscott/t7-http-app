@@ -30,8 +30,8 @@ class App {
 
 	public function __construct( string $routes_file ) {
 		if ( ! is_readable( $routes_file ) ) {
-			$msg = "T7\HTTP\App: routes file is not readable: $routes_file";
-			error_log( $msg );
+			$msg = "routes file is not readable: $routes_file";
+			$this->error_log( $msg );
 			echo $msg . "\n";
 			exit( 1 );
 		}
@@ -68,6 +68,11 @@ class App {
 
 		$app->response->withBody( $out );
 		return $app->response;
+	}
+
+	public function error_log( string $msg ): void {
+		$msg = "T7\HTTP\App: $msg";
+		error_log( $msg );
 	}
 
 	public function load_routes(): void {
