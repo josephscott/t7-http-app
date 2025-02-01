@@ -103,6 +103,10 @@ class App {
 					$response
 				);
 				break;
+			case Dispatcher::METHOD_NOT_ALLOWED:
+				$response->withStatus( 405 );
+				$this->error_log( 'method not allowed' );
+				break;
 		}
 
 		$connection->send( $response );
