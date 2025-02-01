@@ -103,6 +103,17 @@ class App {
 					$response
 				);
 				break;
+			case Dispatcher::NOT_FOUND:
+				// If there was no trailing slash, redirect to the same URL
+				// with a trailing slash
+				if (
+					$request->path() !== '/'
+					&& substr( $request->path(), -1 ) !== '/'
+				) {
+					$response->withStatus( 302 );
+					$response->withHeader( 'Location', $request->path() . '/' );
+				}
+				break;
 			case Dispatcher::METHOD_NOT_ALLOWED:
 				$response->withStatus( 405 );
 				$this->error_log( 'method not allowed' );
