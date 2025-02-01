@@ -18,9 +18,12 @@ use function is_string;
 use function ob_end_clean;
 use function ob_get_contents;
 use function ob_start;
+use function substr;
 
 class App {
 	public string $origin = 'http://127.0.0.1:31313';
+
+	public mixed $route_404 = null;
 
 	private object $router;
 
@@ -112,6 +115,20 @@ class App {
 				) {
 					$response->withStatus( 302 );
 					$response->withHeader( 'Location', $request->path() . '/' );
+				} else {
+					// Real 404, where the was not match at this URL at all
+					$response->withStatus( 404 );
+
+					if ( $this->route_404 !== null ) {
+						$response = $this->call_route(
+							$this->route_404,
+							[],
+							$request,
+							$response
+						);
+					} else {
+						$response->withBody( '404 Not Found' );
+					}
 				}
 				break;
 			case Dispatcher::METHOD_NOT_ALLOWED:
