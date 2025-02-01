@@ -6,5 +6,6 @@ require __DIR__ . '/../vendor/autoload.php';
 $app = new \T7\HTTP\App(
 	routes_file: __DIR__ . '/routes.php'
 );
+$app->route_404 = __DIR__ . '/404.php';
 
 $app->run();
