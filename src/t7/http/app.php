@@ -21,15 +21,23 @@ use function ob_start;
 use function substr;
 
 class App {
+	/* Public vars */
+
 	public string $origin = 'http://127.0.0.1:31313';
 
 	public mixed $route_404 = null;
+
+	public int $worker_count = 10;
+
+	/* Private vars */
 
 	private object $router;
 
 	private string $routes_file;
 
 	private object $worker;
+
+	/* Public methods */
 
 	public function __construct( string $routes_file ) {
 		if ( ! is_readable( $routes_file ) ) {
@@ -146,6 +154,7 @@ class App {
 
 	public function run() {
 		$this->worker = new Worker( $this->origin );
+		$this->worker->count = $this->worker_count;
 		$this->worker->onWorkerStart = [ $this, 'on_worker_start' ];
 		$this->worker->onMessage = [ $this, 'on_message' ];
 		$this->worker->runAll();
