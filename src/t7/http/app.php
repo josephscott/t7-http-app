@@ -27,6 +27,8 @@ class App {
 
 	public mixed $route_404 = null;
 
+	public string $server_name = 't7';
+
 	public int $worker_count = 10;
 
 	/* Private vars */
@@ -97,6 +99,7 @@ class App {
 		Request $request
 	) : void {
 		$response = new Response( 200, [] );
+		$response->withHeader( 'Server', $this->server_name );
 
 		$match = $this->router->dispatch(
 			$request->method(),
