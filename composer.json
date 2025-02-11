@@ -12,7 +12,7 @@
 		"josephscott/phpcsfixer-config": "^0.0.4",
 		"phpstan/phpstan": "^2.1",
 		"pestphp/pest": "^3.7.1",
-		"t7/http-request": "^0.0.1"
+		"t7/http-request": "^0.0.2"
 	},
 	"autoload": {
 		"classmap": [
