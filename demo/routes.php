@@ -6,3 +6,5 @@ declare( strict_types = 1 );
 $router->addRoute( 'GET', '/', __DIR__ . '/home.php' );
 $router->addRoute( 'GET', '/dump/', __DIR__ . '/dump.php' );
 $router->addRoute( 'GET', '/json/', __DIR__ . '/json.php' );
+
+$router->addRoute( 'POST', '/form/', __DIR__ . '/form.php' );
