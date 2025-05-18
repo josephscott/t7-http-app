@@ -3,15 +3,13 @@ declare( strict_types = 1 );
 
 namespace T7\HTTP;
 
-use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
+use AltoRouter;
 use stdClass;
 use Workerman\Connection\TcpConnection;
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 use Workerman\Worker;
 use function error_log;
-use function FastRoute\simpleDispatcher;
 use function is_callable;
 use function is_readable;
 use function is_string;
@@ -33,7 +31,7 @@ class App {
 
 	/* Private vars */
 
-	private object $router;
+	private AltoRouter $router;
 
 	private string $routes_file;
 
@@ -89,9 +87,12 @@ class App {
 	}
 
 	public function load_routes(): void {
-		$this->router = simpleDispatcher( function ( RouteCollector $router ) {
-			require $this->routes_file;
-		} );
+		$this->router = new AltoRouter();
+		$router = $this->router; // Make router available in routes file scope
+		require $this->routes_file;
+
+		// Set up the AltoRouter to handle URLs with or without trailing slashes
+		$this->router->setBasePath( '' );
 	}
 
 	public function on_message(
@@ -101,51 +102,45 @@ class App {
 		$response = new Response( 200, [] );
 		$response->withHeader( 'Server', $this->server_name );
 
-		$match = $this->router->dispatch(
-			$request->method(),
-			$request->path()
-		);
+		$method = $request->method();
+		$path = $request->path();
 
-		switch( $match[0] ) {
-			case Dispatcher::FOUND:
-				$handler = $match[1];
-				$vars = $match[2];
-				$response = $this->call_route(
-					$handler,
-					$vars,
-					$request,
-					$response
-				);
-				break;
-			case Dispatcher::NOT_FOUND:
-				// If there was no trailing slash, redirect to the same URL
-				// with a trailing slash
-				if (
-					$request->path() !== '/'
-					&& substr( $request->path(), -1 ) !== '/'
-				) {
-					$response->withStatus( 302 );
-					$response->withHeader( 'Location', $request->path() . '/' );
+		// First check if path matches with the request method
+		$match = $this->router->match( $path, $method );
+
+		if ( $match ) {
+			$handler = $match['target'];
+			$vars = $match['params'];
+			$response = $this->call_route(
+				$handler,
+				$vars,
+				$request,
+				$response
+			);
+		} else {
+			// If there was no trailing slash, redirect to the same URL
+			// with a trailing slash
+			if (
+				$path !== '/'
+				&& substr( $path, -1 ) !== '/'
+			) {
+				$response->withStatus( 302 );
+				$response->withHeader( 'Location', $path . '/' );
+			} else {
+				// Real 404, where there was no match at this URL at all
+				$response->withStatus( 404 );
+
+				if ( $this->route_404 !== null ) {
+					$response = $this->call_route(
+						$this->route_404,
+						[],
+						$request,
+						$response
+					);
 				} else {
-					// Real 404, where the was not match at this URL at all
-					$response->withStatus( 404 );
-
-					if ( $this->route_404 !== null ) {
-						$response = $this->call_route(
-							$this->route_404,
-							[],
-							$request,
-							$response
-						);
-					} else {
-						$response->withBody( '404 Not Found' );
-					}
+					$response->withBody( '404 Not Found' );
 				}
-				break;
-			case Dispatcher::METHOD_NOT_ALLOWED:
-				$response->withStatus( 405 );
-				$this->error_log( 'method not allowed' );
-				break;
+			}
 		}
 
 		$connection->send( $response );

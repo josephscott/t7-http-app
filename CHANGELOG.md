@@ -1,6 +1,7 @@
 # T7\HTTP\App - Changelog
 
 ## ???? - ????
+- Replace FastRoute with AltoRouter
 - Reduce event version requirement to 3.0.8
 - Bump workerman to 5.1.1
 

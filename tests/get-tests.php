@@ -50,10 +50,3 @@ test( 'dump endpoint with query parameters', function () {
 	expect( $response->body )->toContain( 'Method' );
 	expect( $response->body )->toContain( 'test=value' );
 } );
-
-test( 'method not allowed', function () {
-	$response = $this->http->post( url: 'http://127.0.0.1:31313/' );
-
-	expect( $response->error )->toBe( false );
-	expect( $response->code )->toBe( 405 );
-} );

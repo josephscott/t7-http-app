@@ -1,10 +1,10 @@
 <?php
 declare( strict_types = 1 );
 
-// $router is made available in the context of the routes file only
+// $router is made available by the App class load_routes method
 
-$router->addRoute( 'GET', '/', __DIR__ . '/home.php' );
-$router->addRoute( 'GET', '/dump/', __DIR__ . '/dump.php' );
-$router->addRoute( 'GET', '/json/', __DIR__ . '/json.php' );
+$router->map( 'GET', '/', __DIR__ . '/home.php' );
+$router->map( 'GET', '/dump/', __DIR__ . '/dump.php' );
+$router->map( 'GET', '/json/', __DIR__ . '/json.php' );
 
-$router->addRoute( 'POST', '/form/', __DIR__ . '/form.php' );
+$router->map( 'POST', '/form/', __DIR__ . '/form.php' );

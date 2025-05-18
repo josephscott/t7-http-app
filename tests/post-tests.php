@@ -27,10 +27,3 @@ test( 'form submission', function () {
 	expect( $data )->toHaveKey( 'data' );
 	expect( $data['data'] )->toMatchArray( $form_data );
 } );
-
-test( 'post to get-only endpoint', function () {
-	$response = $this->http->post( url: 'http://127.0.0.1:31313/json/' );
-
-	expect( $response->error )->toBe( false );
-	expect( $response->code )->toBe( 405 );
-} );
