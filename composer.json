@@ -4,7 +4,7 @@
 	"require": {
 		"php": ">=8.2",
 		"ext-event": "^3.0.8",
-		"workerman/workerman": "^5.0.1",
+		"workerman/workerman": "^5.1.1",
 		"nikic/fast-route": "^1.3.0"
 	},
 	"require-dev": {
