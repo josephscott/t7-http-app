@@ -50,3 +50,51 @@ test( 'dump endpoint with query parameters', function () {
 	expect( $response->body )->toContain( 'Method' );
 	expect( $response->body )->toContain( 'test=value' );
 } );
+
+// New tests
+test( 'route with integer parameter', function () {
+	$response = $this->http->get( url: 'http://127.0.0.1:31313/users/123/' );
+
+	expect( $response->error )->toBe( false );
+	expect( $response->code )->toBe( 200 );
+	expect( $response->headers['content-type'] )->toBe( 'application/json' );
+
+	$data = json_decode( $response->body, true );
+	expect( $data )->toHaveKey( 'user_id' );
+	expect( $data['user_id'] )->toBe( '123' );
+	expect( $data['found'] )->toBeTrue();
+} );
+
+test( 'deeply nested route', function () {
+	$response = $this->http->get( url: 'http://127.0.0.1:31313/nested/route/path/' );
+
+	expect( $response->error )->toBe( false );
+	expect( $response->code )->toBe( 200 );
+	expect( $response->headers['content-type'] )->toBe( 'application/json' );
+
+	$data = json_decode( $response->body, true );
+	expect( $data )->toHaveKey( 'nested' );
+	expect( $data['nested'] )->toBeTrue();
+} );
+
+test( 'route with special characters', function () {
+	$text = 'hello-world_123';
+	$response = $this->http->get( url: "http://127.0.0.1:31313/special-chars/$text/" );
+
+	expect( $response->error )->toBe( false );
+	expect( $response->code )->toBe( 200 );
+	expect( $response->headers['content-type'] )->toBe( 'application/json' );
+
+	$data = json_decode( $response->body, true );
+	expect( $data )->toHaveKey( 'text' );
+	expect( $data['text'] )->toBe( $text );
+	expect( $data['received'] )->toBeTrue();
+} );
+
+test( '404 for non-existent route with trailing slash', function () {
+	$response = $this->http->get( url: 'http://127.0.0.1:31313/does-not-exist/' );
+
+	expect( $response->error )->toBe( false );
+	expect( $response->code )->toBe( 404 );
+	expect( $response->body )->toContain( 'Lost?' );
+} );
