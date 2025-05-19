@@ -2,7 +2,7 @@
 
 ## ???? - ????
 - Replace FastRoute with AltoRouter
-- More tests
+- New tests for session and file uploads
 - Reduce event version requirement to 3.0.8
 - Bump workerman to 5.1.1
 - Bump t7/http-request to 0.0.3

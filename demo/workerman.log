@@ -1,0 +1,7 @@
+2025-05-19 22:14:33 pid:89960 Workerman[server.php] start in DAEMON mode
+2025-05-19 22:14:33 pid:90012 Workerman[server.php] stop
+2025-05-19 22:14:33 pid:90012 Workerman[server.php] is gracefully stopping ...
+2025-05-19 22:14:33 pid:89962 Workerman[server.php] received signal SIGQUIT
+2025-05-19 22:14:33 pid:89962 Workerman[server.php] stopping
+2025-05-19 22:14:33 pid:89962 Workerman[server.php] has been stopped
+2025-05-19 22:14:34 pid:90012 Workerman[server.php] stop success
