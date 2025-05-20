@@ -6,3 +6,4 @@ phpstan.neon
 .phpunit.result.cache
 phpunit.xml
 
+demo/workerman.log
