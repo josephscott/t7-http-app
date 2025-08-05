@@ -8,6 +8,6 @@ $app = new \T7\HTTP\App(
 );
 $app->server_name = 't7-demo';
 $app->route_404 = __DIR__ . '/404.php';
-$app->worker_count = 10;
+$app->worker_count = 4;
 
 $app->run();
