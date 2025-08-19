@@ -1,6 +1,13 @@
 {
 	"name": "t7/http-app",
 	"license": "MIT",
+	"authors": [
+		{
+			"name": "Joseph Scott",
+			"email": "joseph@josephscott.org",
+			"homepage": "https://josephscott.org/"
+		}
+	],
 	"require": {
 		"php": ">=8.2",
 		"ext-event": "^3.0.8",
