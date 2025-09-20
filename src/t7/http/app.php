@@ -35,11 +35,13 @@ class App {
 
 	private string $routes_file;
 
+	private string $routes_path;
+
 	private object $worker;
 
 	/* Public methods */
 
-	public function __construct( string $routes_file ) {
+	public function __construct( string $routes_file, string $routes_path ) {
 		if ( ! is_readable( $routes_file ) ) {
 			$msg = "routes file is not readable: $routes_file";
 			$this->error_log( $msg );
@@ -48,6 +50,23 @@ class App {
 		}
 
 		$this->routes_file = $routes_file;
+		$this->routes_path = $routes_path;
+		spl_autoload_register( [ $this, 'autoload' ] );
+	}
+
+	public function autoload( string $class ) : void {
+		$class = str_replace( '\\', '/', $class );
+		$file = $this->routes_path . '/' . $class . '.php';
+		if ( is_readable( $file ) ) {
+			require $file;
+			return;
+		}
+
+		$file = $this->routes_path . '/' . strtolower( $class ) . '.php';
+		if ( is_readable( $file ) ) {
+			require $file;
+			return;
+		}
 	}
 
 	public function call_route(
@@ -63,6 +82,14 @@ class App {
 		$app->vars = $vars;
 
 		$out = '';
+
+		if ( is_array( $handler ) && ! empty( $handler[0] ) ) {
+			$route_object = new $handler[0]();
+			$route_method = $request->method();
+			$out = $route_object->$route_method( $app );
+			$app->response->withBody( $out );
+			return $app->response;
+		}
 
 		if ( is_string( $handler ) && is_readable( $handler ) ) {
 			$call_file = function ( $app ) {
