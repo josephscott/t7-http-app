@@ -1,6 +1,8 @@
 <?php
 declare( strict_types = 1 );
 
+$router->map( 'GET', '/', [ 'Another' ] );
+
 // $router is made available by the App class load_routes method
 
 $router->map( 'GET', '/', __DIR__ . '/home.php' );
